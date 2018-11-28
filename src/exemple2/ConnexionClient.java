@@ -1,6 +1,8 @@
 package exemple2;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -31,10 +33,47 @@ public class ConnexionClient extends Thread {
 		String chemin = getEntete();
 		if(chemin.equals("/")){
 		envoiReponse();
-		}else{
-			
+		}else if(!chemin.equals("/favicon.ico")){
+			verifierEntente(chemin);
 		}
 		fermetureFlux();
+	}
+
+	private void verifierEntente(String chemin) {
+		String corps = "";
+		try {
+		File site = new File(ConnexionClient.class.getResource("siteHTTP/"+chemin).getPath());
+		
+		System.out.println(site.toString());
+		
+		if(site.exists() && !site.isDirectory()){
+		
+			        BufferedReader in = new BufferedReader(new FileReader(site));
+			        String str;
+			        while ((str = in.readLine()) != null) {
+			            corps +=str;
+			        }
+			        in.close();
+			    
+		}
+	
+
+		// longueur du corps de la réponse
+		int len = corps.length();
+
+		// envoie des entêtes
+		out.print("HTTP/1.0 200 OK\r\n");
+		out.print("Content-Length: " + len + "\r\n");
+		out.print("Content-Type: text/html\r\n\r\n"); // envoie de la ligne vide
+		// envoi de la réponse
+		out.print(corps);
+
+		out.flush();
+
+		} catch (Exception e) {
+
+				System.out.println("Error 404: Fichier non trouver");
+			}
 	}
 
 	private String getEntete() {

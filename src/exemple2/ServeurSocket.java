@@ -24,7 +24,6 @@ public class ServeurSocket {
 			socketServeur = new ServerSocket(httpd);
 			while(true){
 			socketCommunication = socketServeur.accept();
-			System.out.println("un client a fait une connexion : "+compteurConnexion);
 			ConnexionClient connexionClient = new ConnexionClient(socketCommunication, compteurConnexion);
 			connexionClient.start();
 			compteurConnexion++;
